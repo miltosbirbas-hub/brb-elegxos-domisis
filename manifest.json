@@ -1,0 +1,17 @@
+{
+  "name": "Έλεγχος Δόμησης — Πόρισμα Ελεγκτών",
+  "short_name": "Έλεγχος Δόμησης",
+  "description": "Πόρισμα Ελεγκτών Δόμησης (Ν.4495/2017 · ΚΥΑ 299/2014) — σημεία ελέγχου, αμοιβή, DOCX. BRB Development.",
+  "start_url": "https://miltosbirbas-hub.github.io/brb-elegxos-domisis/",
+  "scope": "https://miltosbirbas-hub.github.io/brb-elegxos-domisis/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0A1730",
+  "theme_color": "#0D1C36",
+  "lang": "el",
+  "icons": [
+    { "src": "https://miltosbirbas-hub.github.io/brb-elegxos-domisis/elegxos-icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "https://miltosbirbas-hub.github.io/brb-elegxos-domisis/elegxos-icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "https://miltosbirbas-hub.github.io/brb-elegxos-domisis/elegxos-icon-512-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
