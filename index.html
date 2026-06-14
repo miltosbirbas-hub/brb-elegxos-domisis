@@ -21229,6 +21229,8 @@ header .sub{font-size:11px;opacity:.7;font-weight:400}
 .thumbs{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px;margin-top:12px}
 .thumb{position:relative;border-radius:9px;overflow:hidden;border:1px solid var(--line);aspect-ratio:4/3;background:var(--surface2)}
 .thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.thumb .filebadge{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;background:var(--surface2);color:var(--accent-l);font-size:24px}
+.thumb .filebadge span{font-size:9px;color:var(--muted);max-width:90%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:0 4px}
 .thumb .x{position:absolute;top:4px;right:4px;background:rgba(0,0,0,.7);color:#fff;border:none;width:22px;height:22px;border-radius:6px;cursor:pointer;font-size:13px;line-height:1}
 .thumb .cap{position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,.72)}
 .thumb .cap input{background:transparent;border:none;color:#fff;font-size:10px;width:100%;font-family:inherit;padding:3px 5px}
@@ -21425,8 +21427,8 @@ header .sub{font-size:11px;opacity:.7;font-weight:400}
   <div class="section">
     <div class="sh"><span class="num">8</span><h2>Σχέδια / διαγράμματα</h2></div>
     <div class="sbody">
-      <label class="up" for="drawIn"><div class="ico">📐</div><div class="t">Προσθήκη σχεδίων</div><div class="s">Τοπογραφικό, κατόψεις, διάγραμμα κάλυψης</div></label>
-      <input id="drawIn" type="file" accept="image/*" multiple hidden>
+      <label class="up" for="drawIn"><div class="ico">📐</div><div class="t">Προσθήκη σχεδίων</div><div class="s">Τοπογραφικό, κατόψεις, διάγραμμα κάλυψης — JPG/PNG/PDF</div></label>
+      <input id="drawIn" type="file" accept="image/*,application/pdf,.pdf" multiple hidden>
       <div class="thumbs" id="drawThumbs"></div>
     </div>
   </div>
@@ -21609,11 +21611,13 @@ $$('#findRadios input').forEach(r=>r.onchange=()=>{
   $('#parabBox').style.display=r.value==='warn'?'flex':'none';save();
 });
 
-function handleFiles(files,arr,render){[...files].forEach(f=>{const rd=new FileReader();rd.onload=e=>{arr.push({src:e.target.result,cap:''});render();save();};rd.readAsDataURL(f);});}
+function handleFiles(files,arr,render){[...files].forEach(f=>{const rd=new FileReader();rd.onload=e=>{arr.push({src:e.target.result,cap:'',name:f.name||''});render();save();};rd.readAsDataURL(f);});}
 function renderThumbs(arr,el){
   el.innerHTML='';
   arr.forEach((o,i)=>{const d=document.createElement('div');d.className='thumb';
-    d.innerHTML=`<img src="${o.src}"><button class="x">×</button><div class="cap"><input placeholder="Λεζάντα..." value="${(o.cap||'').replace(/"/g,'&quot;')}"></div>`;
+    const isImg=(o.src||'').startsWith('data:image/');
+    const inner = isImg ? `<img src="${o.src}">` : `<div class="filebadge">📄<span>${(o.name||'PDF').replace(/[<>&"]/g,'')}</span></div>`;
+    d.innerHTML=`${inner}<button class="x">×</button><div class="cap"><input placeholder="Λεζάντα..." value="${(o.cap||'').replace(/"/g,'&quot;')}"></div>`;
     d.querySelector('.x').onclick=()=>{arr.splice(i,1);renderThumbs(arr,el);save();};
     d.querySelector('input').oninput=e=>{o.cap=e.target.value;save();};el.appendChild(d);});
 }
@@ -21778,7 +21782,7 @@ async function buildDOCX(){
   if(gv('paratiriseis'))gv('paratiriseis').split('\n').forEach(l=>kids.push(p(l)));
   if(state.find==='warn'&&gv('parabaseis')){kids.push(p("Παραβάσεις:",{bold:true}));gv('parabaseis').split('\n').forEach(l=>kids.push(p(l)));}
   if(r&&r.fee!=null){kids.push(h3("Αμοιβή ελέγχου"));kids.push(kvTable([["Βάση υπολογισμού",`${r.rate} (ΚΥΑ 299/2014, άρθρο 3)`],["Αμοιβή (προ ΦΠΑ)",eur(r.fee)],["Απαιτούμενοι ελεγκτές",String(r.need)]]));}
-  async function imgBlock(arr,title,prefix){if(!arr.length)return;kids.push(h3(title));for(let i=0;i<arr.length;i++){const o=arr[i];let dims;try{dims=await imgDims(o.src);}catch(e){dims={w:4,h:3};}const wpx=Math.min(420,dims.w);const hpx=Math.round(wpx*dims.h/dims.w);try{kids.push(new Paragraph({spacing:{before:80,after:20},children:[new ImageRun({type:imgType(o.src),data:dataURLtoBytes(o.src),transformation:{width:wpx,height:hpx}})]}));}catch(e){}kids.push(p(`${prefix} ${i+1}${o.cap?' — '+o.cap:''}`,{size:16,after:60}));}}
+  async function imgBlock(arr,title,prefix){if(!arr.length)return;kids.push(h3(title));for(let i=0;i<arr.length;i++){const o=arr[i];const isImg=(o.src||'').startsWith('data:image/');if(isImg){let dims;try{dims=await imgDims(o.src);}catch(e){dims={w:4,h:3};}const wpx=Math.min(420,dims.w);const hpx=Math.round(wpx*dims.h/dims.w);try{kids.push(new Paragraph({spacing:{before:80,after:20},children:[new ImageRun({type:imgType(o.src),data:dataURLtoBytes(o.src),transformation:{width:wpx,height:hpx}})]}));}catch(e){}kids.push(p(`${prefix} ${i+1}${o.cap?' — '+o.cap:''}`,{size:16,after:60}));}else{kids.push(p(`${prefix} ${i+1}: ${o.name||'αρχείο PDF'}${o.cap?' — '+o.cap:''} (συνημμένο PDF)`,{size:18,after:40}));}}}
   await imgBlock(state.draws,"Σχέδια / διαγράμματα","Σχ.");
   await imgBlock(state.photos,"Φωτογραφική τεκμηρίωση","Φωτ.");
   kids.push(new Paragraph({spacing:{before:600},children:[new TextRun({text:"",font:FONT})]}));
@@ -21823,7 +21827,7 @@ function buildReport(){
   ${gv('paratiriseis')?`<p>${esc(gv('paratiriseis')).replace(/\n/g,'<br>')}</p>`:''}
   ${state.find==='warn'&&gv('parabaseis')?`<p><b>Παραβάσεις:</b><br>${esc(gv('parabaseis')).replace(/\n/g,'<br>')}</p>`:''}`;
   if(r&&r.fee!=null){html+=`<h3>Αμοιβή ελέγχου</h3><table><tr><td class="lbl">Βάση υπολογισμού</td><td>${esc(r.rate)} (ΚΥΑ 299/2014, άρθρο 3)</td></tr><tr><td class="lbl">Αμοιβή (προ ΦΠΑ)</td><td><b>${eur(r.fee)}</b></td></tr><tr><td class="lbl">Απαιτούμενοι ελεγκτές</td><td>${r.need}</td></tr></table>`;}
-  if(state.draws.length){html+=`<h3>Σχέδια / διαγράμματα</h3><div class="photos">`;state.draws.forEach((o,i)=>html+=`<figure><img src="${o.src}"><figcaption>Σχ. ${i+1}${o.cap?' — '+esc(o.cap):''}</figcaption></figure>`);html+=`</div>`;}
+  if(state.draws.length){html+=`<h3>Σχέδια / διαγράμματα</h3><div class="photos">`;state.draws.forEach((o,i)=>{const isImg=(o.src||'').startsWith('data:image/');html+= isImg?`<figure><img src="${o.src}"><figcaption>Σχ. ${i+1}${o.cap?' — '+esc(o.cap):''}</figcaption></figure>`:`<figure style="padding:14px;text-align:center"><div style="font-size:28px">📄</div><figcaption>Σχ. ${i+1}: ${esc(o.name||'PDF')}${o.cap?' — '+esc(o.cap):''} (συνημμένο PDF)</figcaption></figure>`;});html+=`</div>`;}
   if(state.photos.length){html+=`<h3>Φωτογραφική τεκμηρίωση</h3><div class="photos">`;state.photos.forEach((o,i)=>html+=`<figure><img src="${o.src}"><figcaption>Φωτ. ${i+1}${o.cap?' — '+esc(o.cap):''}</figcaption></figure>`);html+=`</div>`;}
   html+=`<div class="sign">`;const sg=insp.length?insp:[{name:'',reg:''}];
   sg.slice(0,2).forEach(i=>html+=`<div class="sigbox">Ο Ελεγκτής Δόμησης<br><br><br>${esc(i.name)||'………………………'}<br>Αρ. Μητρώου: ${esc(i.reg)||'…………'}</div>`);
