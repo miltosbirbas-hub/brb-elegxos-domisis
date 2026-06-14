@@ -21156,7 +21156,7 @@ var __async = (__this, __arguments, generator) => {
 body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,system-ui,sans-serif;
   background:var(--bg);color:var(--ink);font-size:15px;line-height:1.5;-webkit-text-size-adjust:100%;transition:background .2s,color .2s}
 h1,h2,h3{margin:0;font-weight:650;letter-spacing:-.01em}
-.wrap{max-width:880px;margin:0 auto;padding:0 16px 130px}
+.wrap{max-width:880px;margin:0 auto;padding:0 16px 40px}
 header{background:var(--topbar);color:#fff;padding:16px;position:sticky;top:0;z-index:30;box-shadow:0 2px 12px rgba(0,0,0,.3)}
 header .hwrap{max-width:880px;margin:0 auto;display:flex;align-items:center;gap:12px}
 .logo{width:40px;height:40px;border-radius:9px;background:linear-gradient(135deg,var(--accent),var(--accent-l));
@@ -21275,8 +21275,8 @@ header .sub{font-size:11px;opacity:.7;font-weight:400}
 .law ul{margin:5px 0;padding-left:18px}
 .law li{font-size:12.5px;line-height:1.5;margin:3px 0}
 .law .ref{font-size:11px;color:var(--muted);font-style:italic}
-.bar{position:fixed;bottom:0;left:0;right:0;background:color-mix(in srgb,var(--surface) 92%,transparent);backdrop-filter:blur(10px);border-top:1px solid var(--line);padding:12px 16px;z-index:40}
-.bar .bw{max-width:880px;margin:0 auto;display:flex;gap:8px}
+.bar{position:static;margin-top:18px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 16px;box-shadow:var(--shadow)}
+.bar .bw{display:flex;gap:8px}
 .btn{flex:1;border:none;border-radius:11px;padding:13px 8px;font-weight:650;font-size:13.5px;cursor:pointer;font-family:inherit}
 .btn.primary{background:var(--accent);color:#fff}
 .btn.sec{background:var(--accent2);color:#fff}
@@ -21291,7 +21291,7 @@ header .sub{font-size:11px;opacity:.7;font-weight:400}
 }
 .rep{font-family:"Times New Roman",Georgia,serif;color:#000;font-size:12px;line-height:1.45;max-width:760px;margin:0 auto}
 .rep .rhead{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #000;padding-bottom:8px;margin-bottom:10px}
-.rep .rlogo{font-weight:800;font-size:15px}
+.rep .rlogo{font-weight:700;font-size:12.5px}
 .rep .rlogo small{display:block;font-weight:400;font-size:10px;font-family:sans-serif}
 .rep .rmeta{text-align:right;font-size:11px}
 .rep h2.rtitle{text-align:center;font-size:15px;margin:14px 0 4px;text-transform:uppercase;letter-spacing:.04em}
@@ -21449,7 +21449,6 @@ header .sub{font-size:11px;opacity:.7;font-weight:400}
       </div>
     </div>
   </div>
-</div>
 
 <div class="bar">
   <div class="bw">
@@ -21458,6 +21457,7 @@ header .sub{font-size:11px;opacity:.7;font-weight:400}
     <button class="btn primary" id="printBtn">🖨 Εκτύπωση</button>
   </div>
   <div class="savechip" id="saveChip"></div>
+</div>
 </div>
 
 <!-- Calculator modal -->
@@ -21744,7 +21744,7 @@ async function buildDOCX(){
   function h3(t){return new Paragraph({spacing:{before:200,after:80},border:{bottom:{style:BorderStyle.SINGLE,size:4,color:"E8772E",space:1}},children:[new TextRun({text:t,bold:true,font:FONT,size:22,color:"0A1730"})]});}
   function p(text,o={}){return new Paragraph({alignment:o.align,spacing:{after:o.after??80},children:[new TextRun({text:text||'',bold:!!o.bold,font:FONT,size:o.size||20})]});}
   const kids=[];
-  kids.push(new Paragraph({border:{bottom:{style:BorderStyle.SINGLE,size:8,color:"0A1730",space:2}},spacing:{after:40},children:[new TextRun({text:"BRB DEVELOPMENT",bold:true,font:FONT,size:26,color:"0A1730"}),new TextRun({text:"   Μηχανικός · Ελεγκτής Δόμησης",font:FONT,size:16,color:"E8772E"})]}));
+  kids.push(new Paragraph({border:{bottom:{style:BorderStyle.SINGLE,size:8,color:"0A1730",space:2}},spacing:{after:40},children:[new TextRun({text:"Μηχανικός · Ελεγκτής Δόμησης",bold:true,font:FONT,size:20,color:"0A1730"})]}));
   kids.push(new Paragraph({alignment:AlignmentType.RIGHT,spacing:{after:120},children:[new TextRun({text:`Αρ. πρωτ. ορισμού: ${gv('protOris')||'…………'}    Ημ/νία ελέγχου: ${dateStr}`,font:FONT,size:18,color:"333333"})]}));
   kids.push(p(`Προς: 1. ΔΗΜΟ ${gv('ydom')||'………………………'} — Υπηρεσία Δόμησης   2. Ε.Υ.Ε.Δ.`,{size:18}));
   kids.push(new Paragraph({alignment:AlignmentType.CENTER,spacing:{before:160,after:20},children:[new TextRun({text:"ΠΟΡΙΣΜΑ ΕΛΕΓΚΤΩΝ ΔΟΜΗΣΗΣ",bold:true,font:FONT,size:26,color:"0A1730"})]}));
@@ -21800,7 +21800,7 @@ function buildReport(){
   const r=feeCalc();const area=parseFloat($('#area').value)||0;const insp=inspList();
   const cb=on=>on?'☒':'☐';const esc=s=>(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   const dateStr=gv('imerEleg')?new Date(gv('imerEleg')).toLocaleDateString('el-GR'):'…………………';
-  let html=`<div class="rhead"><div class="rlogo">BRB DEVELOPMENT<small>Μηχανικός · Ελεγκτής Δόμησης</small></div><div class="rmeta"><div><b>Αρ. πρωτ. ορισμού:</b> ${esc(gv('protOris'))||'…………'}</div><div><b>Ημ/νία ελέγχου:</b> ${dateStr}</div></div></div>
+  let html=`<div class="rhead"><div class="rlogo">Μηχανικός · Ελεγκτής Δόμησης</div><div class="rmeta"><div><b>Αρ. πρωτ. ορισμού:</b> ${esc(gv('protOris'))||'…………'}</div><div><b>Ημ/νία ελέγχου:</b> ${dateStr}</div></div></div>
   <div class="small">Προς: 1. ΔΗΜΟ ${esc(gv('ydom'))||'………………………'} — Υπηρεσία Δόμησης &nbsp; 2. Ε.Υ.Ε.Δ.</div>
   <h2 class="rtitle">Πόρισμα Ελεγκτών Δόμησης</h2><div class="rstage">ΣΤΑΔΙΟ ΕΛΕΓΧΟΥ: ${state.stage?stageNames[state.stage].toUpperCase():'—'}</div>
   <table><tr><td class="lbl">Έργο</td><td colspan="3">${esc(gv('ergo'))}</td></tr>
